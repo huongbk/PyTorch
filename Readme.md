@@ -6,16 +6,16 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
 
 - [x] [A Simple Regression Problem](#a-simple-regression-problem)
 - [x] [Gradient Descent](#gradient-descent)
-- [x] [Linear Regression in Numpy](#)
-- [x] [PyTorch](#)
-- [x] [Autograd](#)
-- [x] [Dynamic Computation Graph](#)
-- [x] [Optimizer](#)
-- [x] [Loss](#)
-- [x] [Model](#)
-- [x] [Dataset](#)
-- [x] [DataLoader](#)
-- [x] [Evaluation](#)
+- [x] [Linear Regression in Numpy](#linear-regression-in-numpy)
+- [x] [PyTorch](#pytorch)
+- [x] [Autograd](#autograd)
+- [x] [Dynamic Computation Graph](#dynamic-computation-graph)
+- [x] [Optimizer](#optimizer)
+- [x] [Loss](#loss)
+- [x] [Model](#model)
+- [x] [Dataset](#dataset)
+- [x] [DataLoader](#dataloader)
+- [x] [Evaluation](#evaluation)
 
 ---
 
