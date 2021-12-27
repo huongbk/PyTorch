@@ -1,4 +1,4 @@
-  ### Table of Contents
+### Table of Contents
 
 Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e>
 
@@ -48,6 +48,8 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
     x_val, y_val = x[val_idx], y[val_idx]
     ```
 
+---
+
 **Gradient Descent**
 
 - [See here...](https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e#:~:text=the%20training%20set%E2%80%A6-,Gradient%20Descent,-If%20you%20are)
@@ -72,6 +74,8 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
     `An epoch is complete whenever every point has been already used for computing the loss. For batch gradient descent, this is trivial, as it uses all points for computing the loss — one epoch is the same as one update. For stochastic gradient descent, one epoch means N updates, while for mini-batch (of size n), one epoch has N/n updates.`
 
   - _Repeating this process over and over, for many epochs, is, in a nutshell, training a model._
+
+---
 
 **Linear Regression in Numpy**
 
@@ -127,6 +131,8 @@ linr = LinearRegression()
 linr.fit(x_train, y_train)
 print(linr.intercept_, linr.coef_[0])
 ```
+
+---
 
 **PyTorch**
 
@@ -197,6 +203,8 @@ print(linr.intercept_, linr.coef_[0])
   print(a, b)
   ```
 
+---
+
 **Autograd**
 
 - [See more...](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#)
@@ -265,10 +273,14 @@ print(a, b)
       param.requires_grad = False
   ```
 
+---
+
 **Dynamic Computation Graph**
 
 - [See here...](https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e#3806)
 - The [PyTorchViz](https://github.com/szagoruyko/pytorchviz) package and its `make_dot(variable)` method allows us to easily visualize a graph associated with a given Python variable.
+
+---
 
 **Optimizer**
 
@@ -319,6 +331,8 @@ print(a, b)
   tensor([1.9690], device='cuda:0', requires_grad=True)
   ```
 
+---
+
 **Loss**
 
 - We now tackle the loss computation. As expected, PyTorch got us covered once again. There are many loss functions to choose from, depending on the task at hand.
@@ -359,6 +373,8 @@ print(a, b)
 
   print(a, b)
   ```
+
+---
 
 **Model**
 
@@ -475,6 +491,8 @@ print(a, b)
       print(model.state_dict())
       ```
 
+---
+
 **Dataset**
 
 - In PyTorch, a `dataset` is represented by a regular `Python class` that inherits from the `Dataset` class. You can think of it as a kind of a Python `list of tuples`, each tuple corresponding to one point ` (features, label)`.
@@ -510,6 +528,8 @@ print(a, b)
     train_data = TensorDataset(x_train_tensor, y_train_tensor)
     print(train_data[0])
     ```
+
+---
 
 **DataLoader**
 
@@ -567,6 +587,8 @@ print(a, b)
     train_loader = DataLoader(dataset=train_dataset, batch_size=16)
     val_loader = DataLoader(dataset=val_dataset, batch_size=20)
     ```
+
+---
 
 **Evaluation**
 
