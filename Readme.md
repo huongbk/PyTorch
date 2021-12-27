@@ -4,22 +4,22 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
 
 ---
 
-- [x] A Simple Regression Problem
-- [x] Gradient Descent
-- [x] Linear Regression in Numpy
-- [x] PyTorch
-- [x] Autograd
-- [x] Dynamic Computation Graph
-- [x] Optimizer
-- [x] Loss
-- [x] Model
-- [x] Dataset
-- [x] DataLoader
-- [x] Evaluation
+- [x] [A Simple Regression Problem](#a-simple-regression-problem)
+- [x] [Gradient Descent](#gradient-descent)
+- [x] [Linear Regression in Numpy](#)
+- [x] [PyTorch](#)
+- [x] [Autograd](#)
+- [x] [Dynamic Computation Graph](#)
+- [x] [Optimizer](#)
+- [x] [Loss](#)
+- [x] [Model](#)
+- [x] [Dataset](#)
+- [x] [DataLoader](#)
+- [x] [Evaluation](#)
 
 ---
 
-**A Simple Regression Problem**
+#### A Simple Regression Problem
 
 - Data Generation
 
@@ -50,7 +50,7 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
 
 ---
 
-**Gradient Descent**
+#### Gradient Descent
 
 - [See here...](https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e#:~:text=the%20training%20set%E2%80%A6-,Gradient%20Descent,-If%20you%20are)
 
@@ -77,7 +77,7 @@ Reference: <https://towardsdatascience.com/understanding-pytorch-with-an-example
 
 ---
 
-**Linear Regression in Numpy**
+#### Linear Regression in Numpy
 
 - It’s time to implement our linear regression model using gradient descent using Numpy only.
 
@@ -134,7 +134,7 @@ print(linr.intercept_, linr.coef_[0])
 
 ---
 
-**PyTorch**
+#### PyTorch
 
 - [Tensor](https://pytorch.org/tutorials/beginner/examples_tensor/two_layer_net_tensor.html)
 
@@ -205,7 +205,7 @@ print(linr.intercept_, linr.coef_[0])
 
 ---
 
-**Autograd**
+#### Autograd
 
 - [See more...](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#)
 - Autograd is PyTorch’s automatic differentiation package. Thanks to it, we don’t need to worry about partial derivatives, chain rule or anything like it.
@@ -275,7 +275,7 @@ print(a, b)
 
 ---
 
-**Dynamic Computation Graph**
+#### Dynamic Computation Graph
 
 - [See here...](https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e#3806)
 - The [PyTorchViz](https://github.com/szagoruyko/pytorchviz) package and its `make_dot(variable)` method allows us to easily visualize a graph associated with a given Python variable.
@@ -333,7 +333,7 @@ print(a, b)
 
 ---
 
-**Loss**
+#### Loss
 
 - We now tackle the loss computation. As expected, PyTorch got us covered once again. There are many loss functions to choose from, depending on the task at hand.
 - Since ours is a regression, we are using the `Mean Square Error (MSE)` loss.
@@ -376,7 +376,7 @@ print(a, b)
 
 ---
 
-**Model**
+#### Model
 
 - In PyTorch, a model is represented by a regular Python class that inherits from the Module class.
 - Moreover, we can get the current values for all parameters using our model’s `state_dict()` method.
@@ -493,7 +493,7 @@ print(a, b)
 
 ---
 
-**Dataset**
+#### Dataset
 
 - In PyTorch, a `dataset` is represented by a regular `Python class` that inherits from the `Dataset` class. You can think of it as a kind of a Python `list of tuples`, each tuple corresponding to one point ` (features, label)`.
 - [_Creating a Custom Dataset for your files_](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files)
@@ -531,7 +531,7 @@ print(a, b)
 
 ---
 
-**DataLoader**
+#### DataLoader
 
 - So we use PyTorch’s DataLoader class for this job. We tell it which dataset to use (the one we just built in the previous section), the desired mini-batch size and if we’d like to shuffle it or not. That’s it!
 
@@ -590,7 +590,7 @@ print(a, b)
 
 ---
 
-**Evaluation**
+#### Evaluation
 
 - This is the last part of our journey — we need to change the training loop to include the evaluation of our model, that is, computing the validation loss.
 - There are `two small, yet important`, things to consider:
