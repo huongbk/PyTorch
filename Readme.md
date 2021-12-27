@@ -282,7 +282,7 @@ print(a, b)
 
 ---
 
-**Optimizer**
+#### Optimizer
 
 - An optimizer takes the parameters we want to update, the learning rate we want to use (and possibly many other hyper-parameters as well!) and performs the updates through its `step()` method.
 - Besides, we also don’t need to zero the gradients one by one anymore. We just invoke the optimizer’s `zero_grad()` method and that’s it!
