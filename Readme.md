@@ -138,10 +138,20 @@ print(linr.intercept_, linr.coef_[0])
 
 - [Tensor](https://pytorch.org/tutorials/beginner/examples_tensor/two_layer_net_tensor.html)
 
-  - In Numpy, you may have an array that has three dimensions, right? That is, technically speaking, a tensor.
-  - A scalar (a single number) has zero dimensions, a vector has one dimension, a matrix has two dimensions and a tensor has three or more dimensions. That’s it!
-  - The biggest difference between a numpy array and a PyTorch Tensor is that a PyTorch Tensor can run on either CPU or GPU. To run operations on the GPU, just cast the Tensor to a cuda datatype.
-  - `In PyTorch, every method that ends with an underscore (_) makes changes in-place, meaning, they will modify the underlying variable.`
+  - _A `torch.Tensor` is a multi-dimensional matrix containing elements of a single data type._
+    - A scalar (a single number) has zero dimensions, a vector has one dimension, a matrix has two dimensions and a `tensor has three or more dimensions.` That’s it!
+  - This implementation uses PyTorch tensors to manually compute:
+
+    - `_The forward pass_`
+    - `_Loss_`
+    - `_Backward pass_`
+
+  - The biggest `DIFFERENCE` between a numpy array and a PyTorch Tensor is that a PyTorch Tensor can run on `either CPU or GPU`. To run operations on the GPU, just cast the Tensor to a `cuda datatype`.
+
+  ```text
+  In PyTorch, every method that ends with an underscore (\_) makes changes in-place.
+  An in-place operation is an operation that changes directly the content of a given Tensor without making a copy.
+  ```
 
 - Loading Data, Devices and CUDA
 
@@ -193,7 +203,7 @@ print(linr.intercept_, linr.coef_[0])
     print(a, b)
     ```
 
-- or
+- **`RECOMMENDED`**
 
   ```python
   # We can specify the device at the moment of creation - RECOMMENDED!
@@ -207,59 +217,69 @@ print(linr.intercept_, linr.coef_[0])
 
 #### Autograd
 
-- [See more...](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#)
-- Autograd is PyTorch’s automatic differentiation package. Thanks to it, we don’t need to worry about partial derivatives, chain rule or anything like it.
-- So, how do we tell PyTorch to do its thing and compute all gradients? That’s what `backward()` is good for.
+- [`torch.autograd`](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#) is PyTorch’s automatic differentiation engine that powers neural network training.
 
-```python
-lr = 1e-1
-n_epochs = 1000
+  - We don’t need to worry about partial derivatives, chain rule or anything like it.
 
-torch.manual_seed(42)
-a = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
-b = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
+- So, how do we tell PyTorch to do its thing and compute all gradients?
 
-for epoch in range(n_epochs):
-    yhat = a + b * x_train_tensor
-    error = y_train_tensor - yhat
-    loss = (error ** 2).mean()
+  - That’s what `backward()` is good for.
 
-    # No more manual computation of gradients!
-    # a_grad = -2 * error.mean()
-    # b_grad = -2 * (x_tensor * error).mean()
+- [`torch. no_grad()`](https://pytorch.org/docs/stable/generated/torch.no_grad.html) basically skips the gradient calculation over the weights.
 
-    # We just tell PyTorch to work its way BACKWARDS from the specified loss!
-    loss.backward()
-    # Let's check the computed gradients...
-    print(a.grad)
-    print(b.grad)
+  - [_Source_](https://pytorch.org/docs/stable/_modules/torch/autograd/grad_mode.html#no_grad)
+  - Context-manager that disabled gradient calculation. That means you are not changing any weight in the specified layers.
+  - In this mode, the result of every computation will have `requires_grad=False`, even when the inputs have `requires_grad=True`.
 
-    # What about UPDATING the parameters? Not so fast...
+  ```python
+  lr = 1e-1
+  n_epochs = 1000
 
-    # FIRST ATTEMPT
-    # AttributeError: 'NoneType' object has no attribute 'zero_'
-    # a = a - lr * a.grad
-    # b = b - lr * b.grad
-    # print(a)
+  torch.manual_seed(42)
+  a = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
+  b = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
 
-    # SECOND ATTEMPT
-    # RuntimeError: a leaf Variable that requires grad has been used in an in-place operation.
-    # a -= lr * a.grad
-    # b -= lr * b.grad
+  for epoch in range(n_epochs):
+      yhat = a + b * x_train_tensor
+      error = y_train_tensor - yhat
+      loss = (error ** 2).mean()
 
-    # THIRD ATTEMPT
-    # We need to use NO_GRAD to keep the update out of the gradient computation
-    # Why is that? It boils down to the DYNAMIC GRAPH that PyTorch uses...
-    with torch.no_grad():
-        a -= lr * a.grad
-        b -= lr * b.grad
+      # No more manual computation of gradients!
+      # a_grad = -2 * error.mean()
+      # b_grad = -2 * (x_tensor * error).mean()
 
-    # PyTorch is "clingy" to its computed gradients, we need to tell it to let it go...
-    a.grad.zero_()
-    b.grad.zero_()
+      # We just tell PyTorch to work its way BACKWARDS from the specified loss!
+      loss.backward()
+      # Let's check the computed gradients...
+      print(a.grad)
+      print(b.grad)
 
-print(a, b)
-```
+      # What about UPDATING the parameters? Not so fast...
+
+      # FIRST ATTEMPT
+      # AttributeError: 'NoneType' object has no attribute 'zero_'
+      # a = a - lr * a.grad
+      # b = b - lr * b.grad
+      # print(a)
+
+      # SECOND ATTEMPT
+      # RuntimeError: a leaf Variable that requires grad has been used in an in-place operation.
+      # a -= lr * a.grad
+      # b -= lr * b.grad
+
+      # THIRD ATTEMPT
+      # We need to use NO_GRAD to keep the update out of the gradient computation
+      # Why is that? It boils down to the DYNAMIC GRAPH that PyTorch uses...
+      with torch.no_grad():
+          a -= lr * a.grad
+          b -= lr * b.grad
+
+      # PyTorch is "clingy" to its computed gradients, we need to tell it to let it go...
+      a.grad.zero_()
+      b.grad.zero_()
+
+  print(a, b)
+  ```
 
 - In finetuning, we freeze most of the model and typically only modify the classifier layers to make predictions on new labels. Let’s walk through a small example to demonstrate this. As before, we load a pretrained resnet18 model, and freeze all the parameters.
 
@@ -277,19 +297,22 @@ print(a, b)
 
 #### Dynamic Computation Graph
 
-- [See here...](https://towardsdatascience.com/understanding-pytorch-with-an-example-a-step-by-step-tutorial-81fc5f8c4e8e#3806)
-- The [PyTorchViz](https://github.com/szagoruyko/pytorchviz) package and its `make_dot(variable)` method allows us to easily visualize a graph associated with a given Python variable.
+- A `Dynamic Computational Graph` is a mutable system represented as a directed graph of data flow between operations. It can be visualized as shapes containing text connected by arrows, whereby the vertices (shapes) represent operations on the data flowing along the edges (arrows).
+
+- The [`PyTorchViz`](https://github.com/szagoruyko/pytorchviz) package and its `make_dot(variable)` method allows us to easily visualize a graph associated with a given Python variable.
 
 ---
 
 #### Optimizer
 
-- An optimizer takes the parameters we want to update, the learning rate we want to use (and possibly many other hyper-parameters as well!) and performs the updates through its `step()` method.
-- Besides, we also don’t need to zero the gradients one by one anymore. We just invoke the optimizer’s `zero_grad()` method and that’s it!
+- An `optimizer` takes the parameters we want to update, the learning rate we want to use (and possibly many other hyper-parameters as well!) and performs the updates through its **`step()`** method.
+- Besides, we also don’t need to zero the gradients one by one anymore. We just invoke the optimizer’s **`zero_grad()`** method and that’s it!
 
-- In the code below, we create a `Stochastic Gradient Descent (SGD)` optimizer to update our parameters a and b.
+- A `Stochastic Gradient Descent (SGD)` optimizer to update our parameters a and b.
+  `compute` => `error` => `loss` => `backward()` => `step()` => `zero_grad()`
 
   ```python
+  // code
   torch.manual_seed(42)
   a = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
   b = torch.randn(1, requires_grad=True, dtype=torch.float, device=device)
@@ -323,6 +346,7 @@ print(a, b)
   ```
 
   ```python
+  // output
   # BEFORE: a, b
   tensor([0.6226], device='cuda:0', requires_grad=True)
   tensor([1.4505], device='cuda:0', requires_grad=True)
@@ -335,6 +359,7 @@ print(a, b)
 
 #### Loss
 
+- [`Loss function`](https://pytorch.org/docs/stable/nn.html#loss-functions)
 - We now tackle the loss computation. As expected, PyTorch got us covered once again. There are many loss functions to choose from, depending on the task at hand.
 - Since ours is a regression, we are using the `Mean Square Error (MSE)` loss.
 
@@ -378,48 +403,77 @@ print(a, b)
 
 #### Model
 
-- In PyTorch, a model is represented by a regular Python class that inherits from the Module class.
-- Moreover, we can get the current values for all parameters using our model’s `state_dict()` method.
-- `IMPORTANT:` we need to send our model to the same device where the data is. If our data is made of GPU tensors, _our model must “live” inside the GPU as well._
+- [See torch.nn](https://pytorch.org/docs/stable/nn.html)
+- In _PyTorch_, a model is represented by a regular Python class that inherits from the [`Module class.`](https://pytorch.org/docs/stable/nn.html#containers)
 
-  ```python
-  torch.manual_seed(42)
+  - The most fundamental methods it needs to implement are:
 
-  # Now we can create a model and send it at once to the device
-  model = ManualLinearRegression().to(device)
-  # We can also inspect its parameters using its state_dict
-  print(model.state_dict())
+    - `__init__(self):` it defines the parts that make up the model —in our case, two parameters, a and b.
+    - `forward(self, x):` it performs the actual computation, that is, it outputs a prediction, given the input x.
 
-  lr = 1e-1
-  n_epochs = 1000
+    ```python
+    class ManualLinearRegression(nn.Module):
+        def __init__(self):
+            super().__init__()
+            # To make "a" and "b" real parameters of the model, we need to wrap them with nn.Parameter
+            self.a = nn.Parameter(torch.randn(1, requires_grad=True, dtype=torch.float))
+            self.b = nn.Parameter(torch.randn(1, requires_grad=True, dtype=torch.float))
 
-  loss_fn = nn.MSELoss(reduction='mean')
-  optimizer = optim.SGD(model.parameters(), lr=lr)
+        def forward(self, x):
+            # Computes the outputs / predictions
+            return self.a + self.b * x
+    ```
 
-  for epoch in range(n_epochs):
-      # What is this?!?
-      model.train()
+  - In the `__init__` method, we define our two parameters, a and b, using the `Parameter()` class, to tell PyTorch these tensors should be considered parameters of the model they are an attribute of.
 
-      # No more manual prediction!
-      # yhat = a + b * x_tensor
-      yhat = model(x_train_tensor)
+  - Moreover, we can get the current values for all parameters using our model’s `state_dict()` method.
 
-      loss = loss_fn(y_train_tensor, yhat)
-      loss.backward()
-      optimizer.step()
-      optimizer.zero_grad()
+- `IMPORTANT:`
 
-  print(model.state_dict())
-  ```
+  - We need to send our model to the same device where the data is.
+  - If our data is made of GPU tensors, _our model must “live” inside the GPU as well._
 
-- In PyTorch, models have a `train()` method which, somewhat disappointingly, does NOT perform a training step. Its only purpose is to set the model to training mode. Why is this important? Some models may use mechanisms like `Dropout`, for instance, which have distinct behaviors in training and evaluation phases.
+    ```python
+    torch.manual_seed(42)
+
+    # Now we can create a model and send it at once to the device
+    model = ManualLinearRegression().to(device)
+    # We can also inspect its parameters using its state_dict
+    print(model.state_dict())
+
+    lr = 1e-1
+    n_epochs = 1000
+
+    loss_fn = nn.MSELoss(reduction='mean')
+    optimizer = optim.SGD(model.parameters(), lr=lr)
+
+    for epoch in range(n_epochs):
+        # What is this?!?
+        model.train()
+
+        # No more manual prediction!
+        # yhat = a + b * x_tensor
+        yhat = model(x_train_tensor)
+
+        loss = loss_fn(y_train_tensor, yhat)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
+    print(model.state_dict())
+    ```
+
+- In PyTorch, models have a `train()` method which, somewhat disappointingly, does NOT perform a training step. Its only purpose is to set the model to training mode.
+
+  - Why is this important? Some models may use mechanisms like `Dropout`, for instance, which have distinct behaviors in training and evaluation phases.
+  - You can see `train()` and `val()` method in source code [_Module class_](https://pytorch.org/docs/stable/_modules/torch/nn/modules/module.html#Module)
 
 - `Nested Models`
 
   - Let’s use PyTorch’s Linear model as an attribute of our own, thus creating a nested model.
 
     - In the `__init__` method, we created an attribute that contains our nested Linear model.
-    - In the `forward()` method, we call the nested model itself to perform the forward pass _(notice, we are **not** calling self.linear.forward(x)!)._
+    - In the `forward()` method, we call the nested model itself to perform the forward pass _(notice, we are **not** calling `self.linear.forward(x)!`)._
 
       ```python
       class LayerLinearRegression(nn.Module):
@@ -435,7 +489,7 @@ print(a, b)
       ```
 
     - Now, if we call the `parameters()` method of this model, PyTorch will figure the parameters of its attributes in a recursive way.
-    - You can try it yourself using something like: `[*LayerLinearRegression().parameters()]` to get a list of all parameters.
+    - You can try it yourself using something like: `LayerLinearRegression().parameters()` to get a list of all parameters.
     - You can also add new Linear attributes and, even if you don’t use them at all in the forward pass, they will still be listed under `parameters()`.
 
 - `Sequential Models`
@@ -448,7 +502,7 @@ print(a, b)
     model = nn.Sequential(nn.Linear(1, 1)).to(device)
     ```
 
-- Training Step
+- **`Training Step`**
 
   - So far, we’ve defined an `optimizer`, a `loss function` and a `model`. Scroll up a bit and take a quick look at the code inside the loop. Would it change if we were using a different `optimizer`, or `loss`, or even `model`? If not, how can we make it more generic?
 
